@@ -28,16 +28,16 @@
   "homepage": "https://github.com/istanbuljs/test-exclude#readme",
   "devDependencies": {
     "chai": "^3.5.0",
-    "coveralls": "^2.11.9",
+    "coveralls": "^2.11.12",
     "mocha": "^2.5.3",
-    "nyc": "^6.4.4",
+    "nyc": "^7.1.0",
     "standard": "^7.1.2",
-    "standard-version": "^2.3.0"
+    "standard-version": "^2.4.0"
   },
   "dependencies": {
     "arrify": "^1.0.1",
-    "lodash.assign": "^4.0.9",
-    "micromatch": "^2.3.8",
+    "lodash.assign": "^4.1.0",
+    "micromatch": "^2.3.11",
     "read-pkg-up": "^1.0.1",
     "require-main-filename": "^1.0.1"
   }
