@@ -40,5 +40,16 @@
     "micromatch": "^2.3.11",
     "read-pkg-up": "^1.0.1",
     "require-main-filename": "^1.0.1"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "statements": 100,
+    "branches": 96,
+    "lines": 100,
+    "functions": 100,
+    "reporter": [
+      "lcov",
+      "text"
+    ]
   }
 }
