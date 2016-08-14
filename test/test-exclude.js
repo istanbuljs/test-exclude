@@ -93,6 +93,21 @@ describe('testExclude', function () {
       e.shouldInstrument('src/app.js').should.equal(true)
     })
 
+    it('should respect defaultExcludes if no config is given', function () {
+      const e = exclude({
+        configPath: './test/fixtures/defaults',
+        configKey: 'd'
+      })
+
+      e.shouldInstrument('test.js').should.equal(false)
+      e.shouldInstrument('src/app.test.js').should.equal(false)
+
+      e.shouldInstrument('bar/baz.js').should.equal(true)
+      e.shouldInstrument('bad/file.js').should.equal(true)
+      e.shouldInstrument('foo.js').should.equal(true)
+      e.shouldInstrument('index.js').should.equal(true)
+    })
+
     it('should not throw if a key is missing', function () {
       var e = exclude({
         configPath: './test/fixtures/include',
