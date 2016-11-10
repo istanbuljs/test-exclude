@@ -28,6 +28,17 @@ function TestExclude (opts) {
     this.include = false
   }
 
+  // unless someone explicitly provides !node_modules
+  // always ignore node_modules.
+  if (
+    !this.exclude.filter(function (e) {
+      return /!node_modules/.test(e)
+    }).length &&
+    this.exclude.indexOf('**/node_modules/**') === -1
+  ) {
+    this.exclude.push('**/node_modules/**')
+  }
+
   this.exclude = prepGlobPatterns(
     [].concat(arrify(this.exclude))
   )
@@ -74,8 +85,7 @@ exportFunc.defaultExclude = [
   'test/**',
   'test{,-*}.js',
   '**/*.test.js',
-  '**/__tests__/**',
-  '**/node_modules/**'
+  '**/__tests__/**'
 ]
 
 module.exports = exportFunc
