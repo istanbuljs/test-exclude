@@ -28,20 +28,27 @@ function TestExclude (opts) {
     this.include = false
   }
 
-  // unless someone explicitly provides !node_modules
-  // always ignore node_modules.
-  if (
-    !this.exclude.filter(function (e) {
-      return /!node_modules/.test(e)
-    }).length &&
-    this.exclude.indexOf('**/node_modules/**') === -1
-  ) {
+  if (!this.removeNegatedModuleExclude() && this.exclude.indexOf('**/node_modules/**') === -1) {
     this.exclude.push('**/node_modules/**')
   }
 
   this.exclude = prepGlobPatterns(
     [].concat(arrify(this.exclude))
   )
+}
+
+// if a glob has been provided that explicitly negates
+// the **/node_modules/** default exclude rule, remove it from
+// excludes but don't add the default exclude rule.
+TestExclude.prototype.removeNegatedModuleExclude = function () {
+  var moduleExcludeNegated = false
+  this.exclude = this.exclude.filter(function (e) {
+    var negated = !!micromatch('./node_modules/foo.js', e, {nonegate: false}).length !==
+      !!micromatch('./node_modules/foo.js', e, {nonegate: true}).length
+    if (negated) moduleExcludeNegated = true
+    return !negated
+  })
+  return moduleExcludeNegated
 }
 
 TestExclude.prototype.shouldInstrument = function (filename, relFile) {
@@ -85,7 +92,8 @@ exportFunc.defaultExclude = [
   'test/**',
   'test{,-*}.js',
   '**/*.test.js',
-  '**/__tests__/**'
+  '**/__tests__/**',
+  '**/node_modules/**'
 ]
 
 module.exports = exportFunc

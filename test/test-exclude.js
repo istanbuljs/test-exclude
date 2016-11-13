@@ -60,7 +60,7 @@ describe('testExclude', function () {
 
   it('allows node_modules folder to be included, if !node_modules is explicitly provided', function () {
     const e = exclude({
-      exclude: ['**/!node_modules']
+      exclude: ['!**/node_modules/**']
     })
 
     e.shouldInstrument('node_modules/some/module/to/cover.js').should.equal(true)

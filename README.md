@@ -46,7 +46,7 @@ stored in `node_modules`, a negative glob can be used:
 ```js
 const exclude = require('test-exclude')
 const e = exclude({
-  exclude: ['**/!node_modules']
+  exclude: ['!**/node_modules/**']
 })
 ```
 
