@@ -98,6 +98,7 @@ var exportFunc = function (opts) {
 }
 
 exportFunc.defaultExclude = [
+  'coverage/**',
   'test/**',
   'test{,-*}.js',
   '**/*.test.js',
