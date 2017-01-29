@@ -1,5 +1,7 @@
 # test-exclude
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/istanbuljs/test-exclude.svg)](https://greenkeeper.io/)
+
 The file include/exclude logic used by [nyc](https://github.com/istanbuljs/nyc).
 
 [![Build Status](https://travis-ci.org/istanbuljs/test-exclude.svg)](https://travis-ci.org/istanbuljs/test-exclude)
