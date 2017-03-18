@@ -64,11 +64,8 @@ TestExclude.prototype.shouldInstrument = function (filename, relFile) {
   return (!this.include || micromatch.any(relFile, this.include, {dotfiles: true})) && !micromatch.any(relFile, this.exclude, {dotfiles: true})
 }
 
-TestExclude.prototype.shouldReport = function (filename, relFile) {
-  relFile = relFile || path.relative(this.cwd, filename)
-
-  relFile = relFile.replace(/^\.[\\/]/, '') // remove leading './' or '.\'.
-  return (!this.include || micromatch.any(relFile, this.include, {dotfiles: true})) && !micromatch.any(relFile, this.exclude, {dotfiles: true})
+TestExclude.prototype.shouldReport = function (filename) {
+  return (!this.include || micromatch.any(filename, this.include, {dotfiles: true})) && !micromatch.any(filename, this.exclude, {dotfiles: true})
 }
 
 TestExclude.prototype.pkgConf = function (key, path) {
