@@ -1,12 +1,16 @@
 'use strict';
 
-const base = require('../../monorepo-per-package-full');
 const defaultExclude = require('./default-exclude');
 
 const isWindows = process.platform === 'win32';
 
 module.exports = {
-    ...base,
+    all: true,
+    checkCoverage: true,
+    lines: 100,
+    statements: 100,
+    functions: 100,
+    branches: 100,
     exclude: [
         ...defaultExclude,
         'is-outside-dir.js',
