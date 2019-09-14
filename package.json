@@ -8,7 +8,7 @@
     "!nyc.config.js"
   ],
   "scripts": {
-    "test": "nyc mocha"
+    "test": "tap"
   },
   "repository": {
     "type": "git",
@@ -33,9 +33,7 @@
     "minimatch": "^3.0.4"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^6.1.4",
-    "nyc": "^14.1.1"
+    "tap": "^14.4.2"
   },
   "engines": {
     "node": ">=8"

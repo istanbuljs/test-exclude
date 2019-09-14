@@ -1,374 +1,276 @@
 'use strict';
-/* global describe, it */
-
 const path = require('path');
+const t = require('tap');
+
 const exclude = require('../');
 
-require('chai').should();
+async function testHelper(t, { options, no = [], yes = [] }) {
+    const e = exclude(options);
 
-describe('testExclude', () => {
-    it('should exclude the node_modules folder by default', () => {
-        exclude()
-            .shouldInstrument('./banana/node_modules/cat.js')
-            .should.equal(false);
-        exclude()
-            .shouldInstrument('node_modules/cat.js')
-            .should.equal(false);
+    no.forEach(file => {
+        t.false(e.shouldInstrument(file));
     });
 
-    it('ignores ./', () => {
-        exclude()
-            .shouldInstrument('./test.js')
-            .should.equal(false);
-        exclude()
-            .shouldInstrument('./test.cjs')
-            .should.equal(false);
-        exclude()
-            .shouldInstrument('./test.mjs')
-            .should.equal(false);
-        exclude()
-            .shouldInstrument('./test.ts')
-            .should.equal(false);
-        exclude()
-            .shouldInstrument('./foo.test.js')
-            .should.equal(false);
-        exclude()
-            .shouldInstrument('./foo.test.cjs')
-            .should.equal(false);
-        exclude()
-            .shouldInstrument('./foo.test.mjs')
-            .should.equal(false);
-        exclude()
-            .shouldInstrument('./foo.test.ts')
-            .should.equal(false);
+    yes.forEach(file => {
+        t.true(e.shouldInstrument(file));
     });
+}
 
-    it('ignores ./test and ./tests', () => {
-        exclude()
-            .shouldInstrument('./test/index.js')
-            .should.equal(false);
+t.test('should exclude the node_modules folder by default', t =>
+    testHelper(t, {
+        no: ['./banana/node_modules/cat.js', 'node_modules/cat.js']
+    })
+);
 
-        exclude()
-            .shouldInstrument('./tests/index.js')
-            .should.equal(false);
-    });
+t.test('ignores ./', t =>
+    testHelper(t, {
+        no: [
+            './test.js',
+            './test.cjs',
+            './test.mjs',
+            './test.ts',
+            './foo.test.js',
+            './foo.test.cjs',
+            './foo.test.mjs',
+            './foo.test.ts'
+        ]
+    })
+);
 
-    it('matches files in root with **/', () => {
-        exclude()
-            .shouldInstrument('__tests__/**')
-            .should.equal(false);
-    });
+t.test('ignores ./test and ./tests', t =>
+    testHelper(t, {
+        no: ['./test/index.js', './tests/index.js']
+    })
+);
 
-    it('does not instrument files outside cwd', () => {
-        exclude({ include: ['../foo.js'] })
-            .shouldInstrument('../foo.js')
-            .should.equal(false);
-        if (process.platform === 'win32') {
-            exclude({ cwd: 'C:\\project' })
-                .shouldInstrument('D:\\project\\foo.js')
-                .should.equal(false);
-        }
-    });
+t.test('matches files in root with **/', t =>
+    testHelper(t, {
+        no: ['__tests__/**']
+    })
+);
 
-    it('can instrument files outside cwd if relativePath=false', () => {
-        exclude({
+t.test('does not instrument files outside cwd', t =>
+    testHelper(t, {
+        options: {
+            include: ['../foo.js']
+        },
+        no: ['../foo.js']
+    })
+);
+
+if (process.platform === 'win32') {
+    t.test('does not instrument files on different drive (win32)', t =>
+        testHelper(t, {
+            options: {
+                cwd: 'C:\\project'
+            },
+            no: ['D:\\project\\foo.js']
+        })
+    );
+}
+
+t.test('can instrument files outside cwd if relativePath=false', t =>
+    testHelper(t, {
+        options: {
             include: ['../foo.js'],
             relativePath: false
-        })
-            .shouldInstrument('../foo.js')
-            .should.equal(true);
-    });
+        },
+        yes: ['../foo.js']
+    })
+);
 
-    it('does not instrument files in the coverage folder by default', () => {
-        exclude()
-            .shouldInstrument('coverage/foo.js')
-            .should.equal(false);
-    });
+t.test('does not instrument files in the coverage folder by default', t =>
+    testHelper(t, {
+        no: ['coverage/foo.js']
+    })
+);
 
-    it('applies exclude rule ahead of include rule', () => {
-        const e = exclude({
+t.test('applies exclude rule ahead of include rule', t =>
+    testHelper(t, {
+        options: {
             include: ['test.js', 'foo.js'],
             exclude: ['test.js']
-        });
-        e.shouldInstrument('test.js').should.equal(false);
-        e.shouldInstrument('foo.js').should.equal(true);
-        e.shouldInstrument('banana.js').should.equal(false);
-    });
+        },
+        no: ['test.js', 'banana.js'],
+        yes: ['foo.js']
+    })
+);
 
-    it('should handle gitignore-style excludes', () => {
-        const e = exclude({
+t.test('should handle gitignore-style excludes', t =>
+    testHelper(t, {
+        options: {
             exclude: ['dist']
-        });
+        },
+        no: ['dist/foo.js', 'dist/foo/bar.js'],
+        yes: ['src/foo.js']
+    })
+);
 
-        e.shouldInstrument('dist/foo.js').should.equal(false);
-        e.shouldInstrument('dist/foo/bar.js').should.equal(false);
-        e.shouldInstrument('src/foo.js').should.equal(true);
-    });
-
-    it('should handle gitignore-style includes', () => {
-        const e = exclude({
+t.test('should handle gitignore-style includes', t =>
+    testHelper(t, {
+        options: {
             include: ['src']
-        });
+        },
+        no: ['src/foo.test.js'],
+        yes: ['src/foo.js', 'src/foo/bar.js']
+    })
+);
 
-        e.shouldInstrument('src/foo.test.js').should.equal(false);
-        e.shouldInstrument('src/foo.js').should.equal(true);
-        e.shouldInstrument('src/foo/bar.js').should.equal(true);
-    });
+t.test("handles folder '.' in path", t =>
+    testHelper(t, {
+        no: ['test/fixtures/basic/.next/dist/pages/async-props.js']
+    })
+);
 
-    it("handles folder '.' in path", () => {
-        const e = exclude();
-        e.shouldInstrument(
-            'test/fixtures/basic/.next/dist/pages/async-props.js'
-        ).should.equal(false);
-    });
+t.test(
+    'excludes node_modules folder, even when empty exclude group is provided',
+    t =>
+        testHelper(t, {
+            options: {
+                exclude: []
+            },
+            no: [
+                './banana/node_modules/cat.js',
+                'node_modules/some/module/to/cover.js'
+            ],
+            yes: ['__tests__/a-test.js', 'src/a.test.js', 'src/foo.js']
+        })
+);
 
-    it('excludes node_modules folder, even when empty exclude group is provided', () => {
-        const e = exclude({
-            exclude: []
-        });
+t.test(
+    'allows node_modules folder to be included, if !node_modules is explicitly provided',
+    t =>
+        testHelper(t, {
+            options: {
+                exclude: ['!**/node_modules/**']
+            },
+            yes: [
+                './banana/node_modules/cat.js',
+                'node_modules/some/module/to/cover.js',
+                '__tests__/a-test.js',
+                'src/a.test.js',
+                'src/foo.js'
+            ]
+        })
+);
 
-        e.shouldInstrument('./banana/node_modules/cat.js').should.equal(false);
-        e.shouldInstrument('node_modules/some/module/to/cover.js').should.equal(
-            false
-        );
-        e.shouldInstrument('__tests__/a-test.js').should.equal(true);
-        e.shouldInstrument('src/a.test.js').should.equal(true);
-        e.shouldInstrument('src/foo.js').should.equal(true);
-    });
+t.test(
+    'allows specific node_modules folder to be included, if !node_modules is explicitly provided',
+    t =>
+        testHelper(t, {
+            options: {
+                exclude: ['!**/node_modules/some/module/to/cover.js']
+            },
+            no: ['./banana/node_modules/cat.js'],
+            yes: [
+                'node_modules/some/module/to/cover.js',
+                '__tests__/a-test.js',
+                'src/a.test.js',
+                'src/foo.js'
+            ]
+        })
+);
 
-    it('allows node_modules folder to be included, if !node_modules is explicitly provided', () => {
-        const e = exclude({
-            exclude: ['!**/node_modules/**']
-        });
+t.test(
+    'allows node_modules default exclusion glob to be turned off, if excludeNodeModules === false',
+    t =>
+        testHelper(t, {
+            options: {
+                excludeNodeModules: false,
+                exclude: ['node_modules/**', '**/__test__/**']
+            },
+            no: [
+                'node_modules/cat.js',
+                './banana/node_modules/__test__/cat.test.js',
+                './banana/node_modules/__test__/cat.js'
+            ],
+            yes: ['./banana/node_modules/cat.js']
+        })
+);
 
-        e.shouldInstrument('./banana/node_modules/cat.js').should.equal(true);
-        e.shouldInstrument('node_modules/some/module/to/cover.js').should.equal(
-            true
-        );
-        e.shouldInstrument('__tests__/a-test.js').should.equal(true);
-        e.shouldInstrument('src/a.test.js').should.equal(true);
-        e.shouldInstrument('src/foo.js').should.equal(true);
-    });
-
-    it('allows specific node_modules folder to be included, if !node_modules is explicitly provided', () => {
-        const e = exclude({
-            exclude: ['!**/node_modules/some/module/to/cover.js']
-        });
-
-        e.shouldInstrument('./banana/node_modules/cat.js').should.equal(false);
-        e.shouldInstrument('node_modules/some/module/to/cover.js').should.equal(
-            true
-        );
-        e.shouldInstrument('__tests__/a-test.js').should.equal(true);
-        e.shouldInstrument('src/a.test.js').should.equal(true);
-        e.shouldInstrument('src/foo.js').should.equal(true);
-    });
-
-    it('allows node_modules default exclusion glob to be turned off, if excludeNodeModules === false', () => {
-        const e = exclude({
-            excludeNodeModules: false,
-            exclude: ['node_modules/**', '**/__test__/**']
-        });
-
-        e.shouldInstrument('node_modules/cat.js').should.equal(false);
-        e.shouldInstrument('./banana/node_modules/cat.js').should.equal(true);
-        e.shouldInstrument(
-            './banana/node_modules/__test__/cat.test.js'
-        ).should.equal(false);
-        e.shouldInstrument(
-            './banana/node_modules/__test__/cat-test.js'
-        ).should.equal(false);
-        e.shouldInstrument(
-            './banana/node_modules/__test__/cat.js'
-        ).should.equal(false);
-    });
-
-    it('allows negated exclude patterns', () => {
-        const e = exclude({
+t.test('allows negated exclude patterns', t =>
+    testHelper(t, {
+        options: {
             exclude: ['foo/**', '!foo/bar.js']
-        });
+        },
+        no: ['./foo/fizz.js'],
+        yes: ['./foo/bar.js']
+    })
+);
 
-        e.shouldInstrument('./foo/fizz.js').should.equal(false);
-        e.shouldInstrument('./foo/bar.js').should.equal(true);
-    });
-
-    it('allows negated include patterns', () => {
-        const e = exclude({
+t.test('allows negated include patterns', t =>
+    testHelper(t, {
+        options: {
             include: ['batman/**', '!batman/robin.js']
-        });
+        },
+        no: ['./batman/robin.js'],
+        yes: ['./batman/joker.js']
+    })
+);
 
-        e.shouldInstrument('./batman/joker.js').should.equal(true);
-        e.shouldInstrument('./batman/robin.js').should.equal(false);
-    });
+t.test(
+    'negated exclude patterns only works for files that are covered by the `include` pattern',
+    t =>
+        testHelper(t, {
+            options: {
+                include: ['index.js'],
+                exclude: ['!index2.js']
+            },
+            no: ['index2.js'],
+            yes: ['index.js']
+        })
+);
 
-    it('negated exclude patterns only works for files that are covered by the `include` pattern', () => {
-        const e = exclude({
-            include: ['index.js'],
-            exclude: ['!index2.js']
-        });
+t.test('no extension option', t =>
+    testHelper(t, {
+        yes: ['file.js', 'package.json']
+    })
+);
 
-        e.shouldInstrument('index.js').should.equal(true);
-        e.shouldInstrument('index2.js').should.equal(false);
-    });
-
-    it('handles extension option', () => {
-        const js = exclude({
+t.test('handles extension option string', t =>
+    testHelper(t, {
+        options: {
             extension: '.js'
-        });
+        },
+        no: ['package.json'],
+        yes: ['file.js']
+    })
+);
 
-        js.shouldInstrument('file.js').should.equal(true);
-        js.shouldInstrument('package.json').should.equal(false);
-
-        const any = exclude();
-        any.shouldInstrument('file.js').should.equal(true);
-        any.shouldInstrument('package.json').should.equal(true);
-
-        const multi = exclude({
+t.test('handles extension option array', t =>
+    testHelper(t, {
+        options: {
             extension: ['.js', '.json']
-        });
-        multi.shouldInstrument('file.js').should.equal(true);
-        multi.shouldInstrument('file.png').should.equal(false);
-        multi.shouldInstrument('package.json').should.equal(true);
-    });
+        },
+        no: ['file.ts'],
+        yes: ['file.js', 'package.json']
+    })
+);
 
-    it('negated exclude patterns unrelated to node_modules do not affect default node_modules exclude behavior', () => {
-        const e = exclude({
-            exclude: ['!foo/**']
-        });
+t.test(
+    'negated exclude patterns unrelated to node_modules do not affect default node_modules exclude behavior',
+    t =>
+        testHelper(t, {
+            options: {
+                exclude: ['!foo/**']
+            },
+            no: ['node_modules/cat.js']
+        })
+);
 
-        e.shouldInstrument('node_modules/cat.js').should.equal(false);
-    });
+t.test('exports defaultExclude', t => {
+    t.matchSnapshot(exclude.defaultExclude);
+    t.end();
+});
 
-    it('exports defaultExclude', () => {
-        exclude.defaultExclude.should.deep.equal([
-            'coverage/**',
-            'packages/*/test{,s}/**',
-            'test{,s}/**',
-            'test{,-*}.{js,cjs,mjs,ts}',
-            '**/*{.,-}test.{js,cjs,mjs,ts}',
-            '**/__tests__/**',
-            '**/{ava,babel,jest,nyc,rollup,webpack}.config.js'
-        ]);
-    });
-
-    describe('globSync', () => {
-        const cwd = path.resolve(__dirname, 'fixtures/glob');
-        const extension = '.js';
-
-        it('should exclude the node_modules folder by default', () => {
-            exclude({ cwd, extension })
-                .globSync()
-                .sort()
-                .should.deep.equal(['file1.js', 'file2.js']);
-
-            exclude({ cwd, extension: ['.json'] })
-                .globSync()
-                .sort()
-                .should.deep.equal(['package.json']);
-
-            exclude({ cwd, extension: [] })
-                .globSync()
-                .sort()
-                .should.deep.equal([
-                    '.nycrc',
-                    'file1.js',
-                    'file2.js',
-                    'package.json'
-                ]);
-
-            exclude({ cwd, extension: ['.js', '.json'] })
-                .globSync()
-                .sort()
-                .should.deep.equal(['file1.js', 'file2.js', 'package.json']);
-
-            exclude({ cwd: path.join(process.cwd(), 'test') })
-                .globSync(cwd)
-                .sort()
-                .should.deep.equal([
-                    '.nycrc',
-                    'file1.js',
-                    'file2.js',
-                    'package.json'
-                ]);
-        });
-
-        it('applies exclude rule ahead of include rule', () => {
-            const e = exclude({
-                cwd,
-                extension,
-                include: ['file1.js', 'file2.js'],
-                exclude: ['file1.js']
-            });
-
-            e.globSync()
-                .sort()
-                .should.deep.equal(['file2.js']);
-        });
-
-        it('allows node_modules folder to be included, if !node_modules is explicitly provided', () => {
-            const e = exclude({
-                cwd,
-                extension,
-                exclude: ['!node_modules']
-            });
-
-            e.globSync()
-                .sort()
-                .should.deep.equal([
-                    'file1.js',
-                    'file2.js',
-                    'node_modules/something/index.js',
-                    'node_modules/something/other.js'
-                ]);
-        });
-
-        it('allows specific node_modules folder to be included, if !node_modules is explicitly provided', () => {
-            const e = exclude({
-                cwd,
-                extension,
-                exclude: ['!node_modules/something/other.js']
-            });
-
-            e.globSync()
-                .sort()
-                .should.deep.equal([
-                    'file1.js',
-                    'file2.js',
-                    'node_modules/something/other.js'
-                ]);
-        });
-
-        it('allows negated exclude patterns', () => {
-            const e = exclude({
-                cwd,
-                extension,
-                exclude: ['*.js', '!file1.js']
-            });
-
-            e.globSync()
-                .sort()
-                .should.deep.equal(['file1.js']);
-        });
-
-        it('allows negated include patterns', () => {
-            const e = exclude({
-                cwd,
-                include: ['*.js', '!file2.js']
-            });
-
-            e.globSync()
-                .sort()
-                .should.deep.equal(['file1.js']);
-        });
-    });
-
-    // see: https://github.com/istanbuljs/babel-plugin-istanbul/issues/71
-    it('allows exclude/include rule to be a string', () => {
-        const e = exclude({
+// see: https://github.com/istanbuljs/babel-plugin-istanbul/issues/71
+t.test('allows exclude/include rule to be a string', t =>
+    testHelper(t, {
+        options: {
             exclude: 'src/**/*.spec.js',
             include: 'src/**'
-        });
-        e.shouldInstrument('src/batman/robin/foo.spec.js').should.equal(false);
-        e.shouldInstrument('src/batman/robin/foo.js').should.equal(true);
-    });
-});
+        },
+        no: ['src/batman/robin/foo.spec.js'],
+        yes: ['src/batman/robin/foo.js']
+    })
+);
