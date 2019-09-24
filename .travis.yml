@@ -7,9 +7,3 @@ node_js:
     - 12
     - 10
     - 8
-
-env:
-    global:
-        COVERALLS_PARALLEL: true
-
-after_success: nyc report --reporter=text-lcov | coveralls

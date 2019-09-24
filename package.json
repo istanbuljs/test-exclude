@@ -28,7 +28,6 @@
   },
   "homepage": "https://istanbul.js.org/",
   "dependencies": {
-    "coveralls": "^3.0.5",
     "glob": "^7.1.4",
     "minimatch": "^3.0.4"
   },
