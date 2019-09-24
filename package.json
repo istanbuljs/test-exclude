@@ -8,6 +8,7 @@
     "!nyc.config.js"
   ],
   "scripts": {
+    "release": "standard-version",
     "test": "tap"
   },
   "repository": {
@@ -32,6 +33,7 @@
     "minimatch": "^3.0.4"
   },
   "devDependencies": {
+    "standard-version": "^7.0.0",
     "tap": "^14.4.2"
   },
   "engines": {
