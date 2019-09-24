@@ -1,7 +1,13 @@
-# Change Log
+# Changelog
 
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [6.0.0-alpha.1](https://github.com/istanbuljs/test-exclude/compare/v6.0.0-alpha.0...v6.0.0-alpha.1) (2019-09-24)
+
+
+### Features
+
+* Add async glob function ([#30](https://github.com/istanbuljs/test-exclude/issues/30)) ([e45ac10](https://github.com/istanbuljs/test-exclude/commit/e45ac10))
 
 # [6.0.0-alpha.0](https://github.com/istanbuljs/istanbuljs/compare/test-exclude@5.2.3...test-exclude@6.0.0-alpha.0) (2019-06-19)
 
