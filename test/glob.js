@@ -5,12 +5,12 @@ const t = require('tap');
 const exclude = require('../');
 
 async function testHelper(t, { options, args = [], label }) {
-    t.matchSnapshot(
-        exclude(options)
-            .globSync(...args)
-            .sort(),
-        label
-    );
+    const e = exclude(options);
+    const sync = e.globSync(...args).sort();
+    const pr = (await e.glob(...args)).sort();
+
+    t.strictDeepEqual(sync, pr, 'glob and globSync should find the same files');
+    t.matchSnapshot(sync, label);
 }
 
 const cwd = path.resolve(__dirname, 'fixtures/glob');

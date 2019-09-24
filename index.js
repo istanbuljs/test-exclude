@@ -1,7 +1,8 @@
 'use strict';
 
 const path = require('path');
-const glob = require('glob');
+const { promisify } = require('util');
+const glob = promisify(require('glob'));
 const minimatch = require('minimatch');
 const defaultExclude = require('./default-exclude');
 const isOutsideDir = require('./is-outside-dir');
@@ -121,6 +122,19 @@ class TestExclude {
         return glob
             .sync(globPatterns, globOptions)
             .filter(file => this.shouldInstrument(path.resolve(cwd, file)));
+    }
+
+    async glob(cwd = this.cwd) {
+        const globPatterns = getExtensionPattern(this.extension || []);
+        const globOptions = { cwd, nodir: true, dot: true };
+        /* If we don't have any excludeNegated then we can optimize glob by telling
+         * it to not iterate into unwanted directory trees (like node_modules). */
+        if (this.excludeNegated.length === 0) {
+            globOptions.ignore = this.exclude;
+        }
+
+        const list = await glob(globPatterns, globOptions);
+        return list.filter(file => this.shouldInstrument(path.resolve(cwd, file)));
     }
 }
 
