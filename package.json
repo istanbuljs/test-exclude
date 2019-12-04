@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "release": "standard-version",
-    "test": "tap"
+    "test": "nyc tap",
+    "snap": "npm test -- --snapshot"
   },
   "repository": {
     "type": "git",
@@ -33,8 +34,9 @@
     "minimatch": "^3.0.4"
   },
   "devDependencies": {
+    "nyc": "^14.1.1",
     "standard-version": "^7.0.0",
-    "tap": "^14.4.2"
+    "tap": "=14.10.2-unbundled"
   },
   "engines": {
     "node": ">=8"
