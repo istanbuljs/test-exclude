@@ -1,6 +1,6 @@
 'use strict';
 
-const defaultExclude = require('./default-exclude');
+const defaultExclude = require('@istanbuljs/schema/default-exclude.js');
 
 const isWindows = process.platform === 'win32';
 

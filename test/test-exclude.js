@@ -223,6 +223,9 @@ t.test(
 
 t.test('no extension option', t =>
     testHelper(t, {
+        options: {
+            extension: []
+        },
         yes: ['file.js', 'package.json']
     })
 );
@@ -257,11 +260,6 @@ t.test(
             no: ['node_modules/cat.js']
         })
 );
-
-t.test('exports defaultExclude', t => {
-    t.matchSnapshot(exclude.defaultExclude);
-    t.end();
-});
 
 // see: https://github.com/istanbuljs/babel-plugin-istanbul/issues/71
 t.test('allows exclude/include rule to be a string', t =>
