@@ -4,20 +4,15 @@ const path = require('path');
 const { promisify } = require('util');
 const glob = promisify(require('glob'));
 const minimatch = require('minimatch');
-const defaultExclude = require('./default-exclude');
+const { defaults } = require('@istanbuljs/schema');
 const isOutsideDir = require('./is-outside-dir');
 
 class TestExclude {
     constructor(opts) {
         Object.assign(
             this,
-            {
-                cwd: process.cwd(),
-                include: false,
-                relativePath: true,
-                excludeNodeModules: true,
-                extension: false
-            },
+            {relativePath: true},
+            defaults.testExclude,
             opts
         );
 
@@ -31,18 +26,11 @@ class TestExclude {
 
         if (typeof this.extension === 'string') {
             this.extension = [this.extension];
-        } else if (
-            !Array.isArray(this.extension) ||
-            this.extension.length === 0
-        ) {
+        } else if (this.extension.length === 0) {
             this.extension = false;
         }
 
-        if (!this.exclude || !Array.isArray(this.exclude)) {
-            this.exclude = defaultExclude;
-        }
-
-        if (this.include && this.include.length > 0) {
+        if (this.include.length > 0) {
             this.include = prepGlobPatterns([].concat(this.include));
         } else {
             this.include = false;
@@ -165,8 +153,4 @@ function getExtensionPattern(extension) {
     }
 }
 
-const exportFunc = opts => new TestExclude(opts);
-
-exportFunc.defaultExclude = defaultExclude;
-
-module.exports = exportFunc;
+module.exports = opts => new TestExclude(opts);
