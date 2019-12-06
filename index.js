@@ -153,4 +153,4 @@ function getExtensionPattern(extension) {
     }
 }
 
-module.exports = opts => new TestExclude(opts);
+module.exports = TestExclude;
