@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.0-alpha.2](https://github.com/istanbuljs/test-exclude/compare/v6.0.0-alpha.1...v6.0.0-alpha.2) (2019-12-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* `test-exclude` now exports a class so it is necessary
+to use `new TestExclude()` when creating an instance.
+
+### Bug Fixes
+
+* Directly export class, document API. ([#39](https://github.com/istanbuljs/test-exclude/issues/39)) ([3acc196](https://github.com/istanbuljs/test-exclude/commit/3acc196482e03be734effd110aa83a4e78d3ebde)), closes [#33](https://github.com/istanbuljs/test-exclude/issues/33)
+* Pull default settings from @istanbuljs/schema ([#38](https://github.com/istanbuljs/test-exclude/issues/38)) ([ffca696](https://github.com/istanbuljs/test-exclude/commit/ffca6968175c9030cebf018fb86d2c0386a61620))
+
 ## [6.0.0-alpha.1](https://github.com/istanbuljs/test-exclude/compare/v6.0.0-alpha.0...v6.0.0-alpha.1) (2019-09-24)
 
 
