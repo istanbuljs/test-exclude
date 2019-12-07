@@ -2,10 +2,10 @@
 const path = require('path');
 const t = require('tap');
 
-const exclude = require('../');
+const TestExclude = require('../');
 
 async function testHelper(t, { options, args = [], label }) {
-    const e = exclude(options);
+    const e = new TestExclude(options);
     const sync = e.globSync(...args).sort();
     const pr = (await e.glob(...args)).sort();
 

@@ -2,10 +2,10 @@
 const path = require('path');
 const t = require('tap');
 
-const exclude = require('../');
+const TestExclude = require('../');
 
 async function testHelper(t, { options, no = [], yes = [] }) {
-    const e = exclude(options);
+    const e = new TestExclude(options);
 
     no.forEach(file => {
         t.false(e.shouldInstrument(file));
