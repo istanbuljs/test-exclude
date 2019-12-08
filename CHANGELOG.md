@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.0-alhpa.3](https://github.com/istanbuljs/test-exclude/compare/v6.0.0-alpha.2...v6.0.0-alhpa.3) (2019-12-08)
+
+
+### Bug Fixes
+
+* Ignore options that are explicitly set undefined. ([#40](https://github.com/istanbuljs/test-exclude/issues/40)) ([b57e936](https://github.com/istanbuljs/test-exclude/commit/b57e9368aacdd548981ffd2ab6447bbd2c1e7de0))
+
 ## [6.0.0-alpha.2](https://github.com/istanbuljs/test-exclude/compare/v6.0.0-alpha.1...v6.0.0-alpha.2) (2019-12-07)
 
 
