@@ -272,3 +272,14 @@ t.test('allows exclude/include rule to be a string', t =>
         yes: ['src/batman/robin/foo.js']
     })
 );
+
+t.test('tolerates undefined exclude/include', t =>
+    testHelper(t, {
+        options: {
+            exclude: undefined,
+            include: undefined
+        },
+        no: ['test.js'],
+        yes: ['index.js']
+    })
+);

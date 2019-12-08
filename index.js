@@ -8,13 +8,18 @@ const { defaults } = require('@istanbuljs/schema');
 const isOutsideDir = require('./is-outside-dir');
 
 class TestExclude {
-    constructor(opts) {
+    constructor(opts = {}) {
         Object.assign(
             this,
             {relativePath: true},
-            defaults.testExclude,
-            opts
+            defaults.testExclude
         );
+
+        for (const [name, value] of Object.entries(opts)) {
+            if (value !== undefined) {
+                this[name] = value;
+            }
+        }
 
         if (typeof this.include === 'string') {
             this.include = [this.include];
@@ -30,7 +35,7 @@ class TestExclude {
             this.extension = false;
         }
 
-        if (this.include.length > 0) {
+        if (this.include && this.include.length > 0) {
             this.include = prepGlobPatterns([].concat(this.include));
         } else {
             this.include = false;
