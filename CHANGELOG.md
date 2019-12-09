@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.0-alpha.3](https://github.com/istanbuljs/test-exclude/compare/v6.0.0-alhpa.3...v6.0.0-alpha.3) (2019-12-09)
+
 ## [6.0.0-alhpa.3](https://github.com/istanbuljs/test-exclude/compare/v6.0.0-alpha.2...v6.0.0-alhpa.3) (2019-12-08)
 
 
