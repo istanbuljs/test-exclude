@@ -67,6 +67,26 @@ if (process.platform === 'win32') {
             no: ['D:\\project\\foo.js']
         })
     );
+
+    t.test('should handle case insensitive drives on win32', t =>
+        testHelper(t, {
+            options: {
+                cwd: 'C:\\project'
+            },
+            yes: ['c:\\project\\foo.js']
+        })
+    );
+
+    t.test('should handle case insensitive paths when on win32', t =>
+        testHelper(t, {
+            options: {
+                exclude: ['foo.js'],
+                include: ['boo.js']
+            },
+            no: ['FOO.js'],
+            yes: ['BOO.js']
+        })
+    );
 }
 
 t.test('can instrument files outside cwd if relativePath=false', t =>

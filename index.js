@@ -5,7 +5,9 @@ const { promisify } = require('util');
 const glob = promisify(require('glob'));
 const minimatch = require('minimatch');
 const { defaults } = require('@istanbuljs/schema');
-const isOutsideDir = require('./is-outside-dir');
+const { isOutsideDir, minimatchOptions } = require('./is-outside-dir');
+const extensionMatcher = require("./extension-matcher");
+
 
 class TestExclude {
     constructor(opts = {}) {
@@ -77,7 +79,7 @@ class TestExclude {
     shouldInstrument(filename, relFile) {
         if (
             this.extension &&
-            !this.extension.some(ext => filename.endsWith(ext))
+            !this.extension.some(extensionMatcher(filename))
         ) {
             return false;
         }
@@ -95,8 +97,7 @@ class TestExclude {
             pathToCheck = relFile.replace(/^\.[\\/]/, ''); // remove leading './' or '.\'.
         }
 
-        const dot = { dot: true };
-        const matches = pattern => minimatch(pathToCheck, pattern, dot);
+        const matches = pattern => minimatch(pathToCheck, pattern, minimatchOptions);
         return (
             (!this.include || this.include.some(matches)) &&
             (!this.exclude.some(matches) || this.excludeNegated.some(matches))
@@ -105,7 +106,7 @@ class TestExclude {
 
     globSync(cwd = this.cwd) {
         const globPatterns = getExtensionPattern(this.extension || []);
-        const globOptions = { cwd, nodir: true, dot: true };
+        const globOptions = Object.assign({ cwd, nodir: true }, minimatchOptions);
         /* If we don't have any excludeNegated then we can optimize glob by telling
          * it to not iterate into unwanted directory trees (like node_modules). */
         if (this.excludeNegated.length === 0) {
@@ -119,7 +120,7 @@ class TestExclude {
 
     async glob(cwd = this.cwd) {
         const globPatterns = getExtensionPattern(this.extension || []);
-        const globOptions = { cwd, nodir: true, dot: true };
+        const globOptions = Object.assign({ cwd, nodir: true }, minimatchOptions);
         /* If we don't have any excludeNegated then we can optimize glob by telling
          * it to not iterate into unwanted directory trees (like node_modules). */
         if (this.excludeNegated.length === 0) {

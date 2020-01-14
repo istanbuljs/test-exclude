@@ -14,6 +14,8 @@ module.exports = {
     exclude: [
         ...defaultExclude,
         'is-outside-dir.js',
-        isWindows ? 'is-outside-dir-posix.js' : 'is-outside-dir-win32.js'
+        'extension-matcher.js',
+        isWindows ? 'is-outside-dir-posix.js' : 'is-outside-dir-win32.js',
+        isWindows ? 'extension-matcher-posix.js' : 'extension-matcher-win32.js'
     ]
 };

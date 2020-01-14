@@ -95,3 +95,15 @@ t.test('allows negated include patterns', t =>
         }
     })
 );
+
+if (process.platform === 'win32') {
+    t.test('handles case insensitive matches on windows', t =>
+        testHelper(t, {
+            options: {
+                cwd,
+                extension: extension.toUpperCase(),
+                include: ['file1.js', 'FILE2.js']
+            }
+        })
+    );
+}

@@ -40,6 +40,13 @@ Array [
 ]
 `
 
+exports[`test/glob.js TAP handles case insensitive matches on windows > must match snapshot 1`] = `
+Array [
+  "file1.js",
+  "file2.js",
+]
+`
+
 exports[`test/glob.js TAP should exclude the node_modules folder by default > absolute constructor cwd 1`] = `
 Array [
   "file1.js",
