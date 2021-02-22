@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
 const glob = promisify(require('glob'));
@@ -49,6 +50,8 @@ class TestExclude {
         }
 
         this.exclude = prepGlobPatterns([].concat(this.exclude));
+
+        this.cwd = fs.realpathSync(this.cwd);
 
         this.handleNegation();
     }
