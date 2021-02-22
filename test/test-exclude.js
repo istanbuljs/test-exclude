@@ -1,4 +1,5 @@
 'use strict';
+const fs = require('fs');
 const path = require('path');
 const t = require('tap');
 
@@ -59,14 +60,35 @@ t.test('does not instrument files outside cwd', t =>
 );
 
 if (process.platform === 'win32') {
-    t.test('does not instrument files on different drive (win32)', t =>
-        testHelper(t, {
-            options: {
-                cwd: 'C:\\project'
-            },
-            no: ['D:\\project\\foo.js']
-        })
-    );
+    t.test('does not instrument files on different drive (win32)', t => {
+        const origRealPathSync = fs.realpathSync;           
+        fs.realpathSync = s => s;
+        try {
+            testHelper(t, {
+                options: {
+                    cwd: 'C:\\project'
+                },
+                no: ['D:\\project\\foo.js']
+            })
+        } finally {
+            fs.realpathSync = origRealPathSync;
+        }
+    });
+    
+    t.test('is not fooled by junctions (win32)', t => {
+        const origRealPathSync = fs.realpathSync;           
+        fs.realpathSync = s => s.replace(/symlink/, 'truedir');
+        try {
+            testHelper(t, {
+                options: {
+                    cwd: 'C:\\project\\symlink'
+                },
+                yes: ['C:\\project\\truedir\\foo.js']
+            })
+        } finally {
+            fs.realpathSync = origRealPathSync;
+        }
+    });
 }
 
 t.test('can instrument files outside cwd if relativePath=false', t =>
