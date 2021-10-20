@@ -36,7 +36,7 @@ class TestExclude {
         }
 
         if (this.include && this.include.length > 0) {
-            this.include = prepGlobPatterns([].concat(this.include));
+            this.include = prepGlobPatterns(this.include);
         } else {
             this.include = false;
         }
@@ -48,7 +48,7 @@ class TestExclude {
             this.exclude = this.exclude.concat('**/node_modules/**');
         }
 
-        this.exclude = prepGlobPatterns([].concat(this.exclude));
+        this.exclude = prepGlobPatterns(this.exclude);
 
         this.handleNegation();
     }
@@ -132,19 +132,23 @@ class TestExclude {
 }
 
 function prepGlobPatterns(patterns) {
-    return patterns.reduce((result, pattern) => {
+    const expandedPatterns = [];
+
+    for (const pattern of patterns) {
+        expandedPatterns.push(pattern);
+
         // Allow gitignore style of directory exclusion
         if (!/\/\*\*$/.test(pattern)) {
-            result = result.concat(pattern.replace(/\/$/, '') + '/**');
+            expandedPatterns.push(pattern.replace(/\/$/, '') + '/**');
         }
 
         // Any rules of the form **/foo.js, should also match foo.js.
         if (/^\*\*\//.test(pattern)) {
-            result = result.concat(pattern.replace(/^\*\*\//, ''));
+            expandedPatterns.push(pattern.replace(/^\*\*\//, ''));
         }
+    }
 
-        return result.concat(pattern);
-    }, []);
+    return expandedPatterns;
 }
 
 function getExtensionPattern(extension) {

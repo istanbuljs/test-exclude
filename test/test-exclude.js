@@ -1,5 +1,4 @@
 'use strict';
-const path = require('path');
 const t = require('tap');
 
 const TestExclude = require('../');
@@ -8,11 +7,11 @@ async function testHelper(t, { options, no = [], yes = [] }) {
     const e = new TestExclude(options);
 
     no.forEach(file => {
-        t.false(e.shouldInstrument(file));
+        t.notOk(e.shouldInstrument(file));
     });
 
     yes.forEach(file => {
-        t.true(e.shouldInstrument(file));
+        t.ok(e.shouldInstrument(file));
     });
 }
 
@@ -283,3 +282,50 @@ t.test('tolerates undefined exclude/include', t =>
         yes: ['index.js']
     })
 );
+
+t.test('efficient with large globless include list', async t => {
+    const include = [];
+    for (let i = 0; i < 100_000; i++) {
+        include.push(`test-${i}.js`);
+    }
+
+    await testHelper(t, {
+        options: {
+            include: include,
+            exclude: ['test.js']
+        },
+        no: ['test.js'],
+        yes: ['test-99999.js']
+    })
+});
+
+t.test('efficient with large globless exclude list', async t => {
+    const exclude = [];
+    for (let i = 0; i < 100_000; i++) {
+        exclude.push(`test-${i}.js`);
+    }
+
+    await testHelper(t, {
+        options: {
+            include: ['test.js'],
+            exclude: exclude
+        },
+        no: ['test-99999.js']
+    })
+});
+
+t.test('worst case scenario', async t => {
+    const include = [];
+    for (let i = 0; i < 100_000; i++) {
+        include.push(`*/test-${i}.js`);
+    }
+
+    await testHelper(t, {
+        options: {
+            include: include,
+            exclude: ['test.js']
+        },
+        no: ['banana.js', 'test.js'],
+        yes: ['dist/test-99999.js']
+    })
+});
