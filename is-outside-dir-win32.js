@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const minimatch = require('minimatch');
+const { minimatch } = require('minimatch');
 
 const dot = { dot: true };
 
