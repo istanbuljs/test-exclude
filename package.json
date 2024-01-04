@@ -36,8 +36,8 @@
   },
   "devDependencies": {
     "nyc": "^15.0.0",
-    "standard-version": "^7.0.0",
-    "tap": "^14.10.5"
+    "standard-version": "^9.0.0",
+    "tap": "^18.0.0"
   },
   "engines": {
     "node": ">=16"
