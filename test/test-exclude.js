@@ -8,11 +8,11 @@ async function testHelper(t, { options, no = [], yes = [] }) {
     const e = new TestExclude(options);
 
     no.forEach(file => {
-        t.false(e.shouldInstrument(file));
+        t.notOk(e.shouldInstrument(file));
     });
 
     yes.forEach(file => {
-        t.true(e.shouldInstrument(file));
+        t.ok(e.shouldInstrument(file));
     });
 }
 

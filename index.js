@@ -2,8 +2,8 @@
 
 const path = require('path');
 const { promisify } = require('util');
-const glob = promisify(require('glob'));
-const minimatch = require('minimatch');
+const { glob } = require('glob');
+const { minimatch } = require('minimatch');
 const { defaults } = require('@istanbuljs/schema');
 const isOutsideDir = require('./is-outside-dir');
 
