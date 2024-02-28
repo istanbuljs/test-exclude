@@ -12,7 +12,7 @@ The file include/exclude logic used by [nyc] and [babel-plugin-istanbul].
 ```js
 const TestExclude = require('test-exclude');
 const exclude = new TestExclude();
-if (exclude().shouldInstrument('./foo.js')) {
+if (exclude.shouldInstrument('./foo.js')) {
     // let's instrument this file for test coverage!
 }
 ```
