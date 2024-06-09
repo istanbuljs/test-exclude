@@ -1,6 +1,7 @@
 'use strict';
 const path = require('path');
 const t = require('tap');
+const { deepEqual } = require('assert');
 
 const TestExclude = require('../');
 
@@ -9,7 +10,7 @@ async function testHelper(t, { options, args = [], label }) {
     const sync = e.globSync(...args).sort();
     const pr = (await e.glob(...args)).sort();
 
-    t.strictDeepEqual(sync, pr, 'glob and globSync should find the same files');
+    deepEqual(sync, pr, 'glob and globSync should find the same files');
     t.matchSnapshot(sync, label);
 }
 

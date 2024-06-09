@@ -1,6 +1,7 @@
 'use strict';
 const path = require('path');
 const t = require('tap');
+const { strictEqual } = require('assert');
 
 const TestExclude = require('../');
 
@@ -8,11 +9,11 @@ async function testHelper(t, { options, no = [], yes = [] }) {
     const e = new TestExclude(options);
 
     no.forEach(file => {
-        t.false(e.shouldInstrument(file));
+        strictEqual(e.shouldInstrument(file), false);
     });
 
     yes.forEach(file => {
-        t.true(e.shouldInstrument(file));
+        strictEqual(e.shouldInstrument(file), true);
     });
 }
 
