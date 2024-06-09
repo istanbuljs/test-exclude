@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.0.0](https://github.com/istanbuljs/test-exclude/compare/test-exclude-v6.0.0...test-exclude-v7.0.0) (2024-06-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** Node 18 is now the minimum required version.
+
+### Bug Fixes
+
+* **deps:** update deps making Node 18 minimum ([#56](https://github.com/istanbuljs/test-exclude/issues/56)) ([ad7dfe1](https://github.com/istanbuljs/test-exclude/commit/ad7dfe1beb553678725faeca158f9ae605b3f561))
+
 ## [6.0.0](https://github.com/istanbuljs/test-exclude/compare/v6.0.0-alpha.3...v6.0.0) (2019-12-20)
 
 
