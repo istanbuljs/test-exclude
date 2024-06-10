@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.0.1](https://github.com/istanbuljs/test-exclude/compare/test-exclude-v7.0.0...test-exclude-v7.0.1) (2024-06-10)
+
+
+### Bug Fixes
+
+* add windowsPathsNoEscape to preserve behaviour on Windows ([15dcfaa](https://github.com/istanbuljs/test-exclude/commit/15dcfaa243be368629c1e2eee16a7ea0d8be51fc))
+
 ## [7.0.0](https://github.com/istanbuljs/test-exclude/compare/test-exclude-v6.0.0...test-exclude-v7.0.0) (2024-06-09)
 
 
