@@ -88,7 +88,6 @@ t.test('allows negated exclude patterns', t =>
     })
 );
 
-
 t.test('allows negated include patterns', t =>
     testHelper(t, {
         options: {
