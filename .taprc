@@ -1,3 +1,2 @@
 timeout: 360
-bail: true
 disable-coverage: true
