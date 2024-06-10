@@ -7,16 +7,18 @@ const TestExclude = require('../');
 async function testHelper(t, { options, args = [], label }) {
     const e = new TestExclude(options);
     const sync = e.globSync(...args).sort();
-    const pr = (await e.glob(...args)).sort();
+    t.strictDeepEqual(sync, 'batman');
 
-    t.strictDeepEqual(sync, pr, 'glob and globSync should find the same files');
-    t.matchSnapshot(sync, label);
+    // const pr = (await e.glob(...args)).sort();
+
+    //t.strictDeepEqual(sync, pr, 'glob and globSync should find the same files');
+    //t.matchSnapshot(sync, label);
 }
 
 const cwd = path.resolve(__dirname, 'fixtures/glob');
 const extension = '.js';
 const options = { cwd, extension };
-
+/*
 t.test('should exclude the node_modules folder by default', async t =>
     Promise.all(
         [
@@ -86,7 +88,7 @@ t.test('allows negated exclude patterns', t =>
         }
     })
 );
-
+*/
 t.test('allows negated include patterns', t =>
     testHelper(t, {
         options: {

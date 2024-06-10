@@ -114,7 +114,7 @@ class TestExclude {
 
         return glob
             .sync(globPatterns, globOptions)
-            .filter(file => this.shouldInstrument(path.resolve(cwd, file)));
+            // .filter(file => this.shouldInstrument(path.resolve(cwd, file)));
     }
 
     async glob(cwd = this.cwd) {
