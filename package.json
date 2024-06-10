@@ -1,6 +1,6 @@
 {
   "name": "test-exclude",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "test for inclusion or exclusion of paths using globs",
   "main": "index.js",
   "files": [
