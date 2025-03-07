@@ -6,6 +6,11 @@ const { minimatch } = require('minimatch');
 const { defaults } = require('@istanbuljs/schema');
 const isOutsideDir = require('./is-outside-dir');
 
+const minimatchOptionsAllowingLeadingDot = { dot: true };
+function patternToRegExp(pattern) {
+    return minimatch.makeRe(pattern, minimatchOptionsAllowingLeadingDot);
+}
+
 class TestExclude {
     constructor(opts = {}) {
         Object.assign(
@@ -50,6 +55,13 @@ class TestExclude {
         this.exclude = prepGlobPatterns([].concat(this.exclude));
 
         this.handleNegation();
+        this.convertAllPatternsToRegexp();
+    }
+
+    convertAllPatternsToRegexp() {
+        this.includeRegexpPatterns = this.include === false ? [] : this.include.map(patternToRegExp);
+        this.excludeRegExpPatterns = this.exclude.map(patternToRegExp);
+        this.excludeNegatedRegexpPatterns = this.excludeNegated.map(patternToRegExp);
     }
 
     /* handle the special case of negative globs
@@ -94,11 +106,10 @@ class TestExclude {
             pathToCheck = relFile.replace(/^\.[\\/]/, ''); // remove leading './' or '.\'.
         }
 
-        const dot = { dot: true };
-        const matches = pattern => minimatch(pathToCheck, pattern, dot);
+        const matches = pattern => pattern.test(pathToCheck);
         return (
-            (!this.include || this.include.some(matches)) &&
-            (!this.exclude.some(matches) || this.excludeNegated.some(matches))
+            (!this.include || this.includeRegexpPatterns.some(matches)) &&
+            (!this.excludeRegExpPatterns.some(matches) || this.excludeNegatedRegexpPatterns.some(matches))
         );
     }
 
