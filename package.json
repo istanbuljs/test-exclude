@@ -31,7 +31,7 @@
   "homepage": "https://istanbul.js.org/",
   "dependencies": {
     "@istanbuljs/schema": "^0.1.2",
-    "glob": "^10.4.1",
+    "glob": "^13.0.6",
     "minimatch": "^10.2.2"
   },
   "devDependencies": {
