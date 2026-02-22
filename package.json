@@ -32,7 +32,7 @@
   "dependencies": {
     "@istanbuljs/schema": "^0.1.2",
     "glob": "^10.4.1",
-    "minimatch": "^9.0.4"
+    "minimatch": "^10.2.2"
   },
   "devDependencies": {
     "c8": "^9.1.0",
