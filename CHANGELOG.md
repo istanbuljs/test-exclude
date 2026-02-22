@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0](https://github.com/istanbuljs/test-exclude/compare/test-exclude-v7.0.2...test-exclude-v8.0.0) (2026-02-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** now requires node 20 due to transitive dependencies
+
+### Bug Fixes
+
+* **deps:** upgrade to latest version of glob ([#72](https://github.com/istanbuljs/test-exclude/issues/72)) ([2b914c8](https://github.com/istanbuljs/test-exclude/commit/2b914c8f67715394abffdff65523267cd2b81b88))
+
 ## [7.0.2](https://github.com/istanbuljs/test-exclude/compare/test-exclude-v7.0.1...test-exclude-v7.0.2) (2026-02-22)
 
 
