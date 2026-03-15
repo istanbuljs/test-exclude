@@ -72,7 +72,7 @@ In this example code:
 * `node_modules/test-exclude/index.js` is excluded because `options.excludeNodeModules`
   is true by default.
 
-### TestExculde#globSync(cwd = options.cwd): Array[string]
+### TestExclude#globSync(cwd = options.cwd): Array[string]
 
 This synchronously retrieves a list of files within `cwd` which should be instrumented.
 Note that setting `cwd` to a parent of `options.cwd` is ineffective, this argument can
