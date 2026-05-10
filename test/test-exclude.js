@@ -284,3 +284,18 @@ t.test('tolerates undefined exclude/include', t =>
         yes: ['index.js']
     })
 );
+
+// Patterns are precompiled to forward-slash regexes; verify Windows-style
+// backslash paths still match. shouldInstrument accepts an explicit relFile,
+// which is what we'd see on Windows.
+t.test('matches Windows-style backslash paths against forward-slash globs', t => {
+    const e = new TestExclude({
+        include: ['src/**/*.js'],
+        exclude: ['src/**/*.spec.js']
+    });
+
+    strictEqual(e.shouldInstrument('src\\batman\\robin\\foo.js', 'src\\batman\\robin\\foo.js'), true);
+    strictEqual(e.shouldInstrument('src\\batman\\robin\\foo.spec.js', 'src\\batman\\robin\\foo.spec.js'), false);
+    strictEqual(e.shouldInstrument('src\\node_modules\\cat.js', 'src\\node_modules\\cat.js'), false);
+    t.end();
+});

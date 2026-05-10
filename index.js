@@ -6,6 +6,9 @@ const { minimatch } = require('minimatch');
 const { defaults } = require('@istanbuljs/schema');
 const isOutsideDir = require('./is-outside-dir');
 
+const minimatchOptions = { dot: true };
+const patternToRegExp = pattern => minimatch.makeRe(pattern, minimatchOptions);
+
 class TestExclude {
     constructor(opts = {}) {
         Object.assign(
@@ -50,6 +53,13 @@ class TestExclude {
         this.exclude = prepGlobPatterns([].concat(this.exclude));
 
         this.handleNegation();
+        this.compilePatterns();
+    }
+
+    compilePatterns() {
+        this.includeRegexps = this.include === false ? false : this.include.map(patternToRegExp);
+        this.excludeRegexps = this.exclude.map(patternToRegExp);
+        this.excludeNegatedRegexps = this.excludeNegated.map(patternToRegExp);
     }
 
     /* handle the special case of negative globs
@@ -94,11 +104,14 @@ class TestExclude {
             pathToCheck = relFile.replace(/^\.[\\/]/, ''); // remove leading './' or '.\'.
         }
 
-        const dot = { dot: true };
-        const matches = pattern => minimatch(pathToCheck, pattern, dot);
+        // minimatch.makeRe produces regexes that expect forward slashes;
+        // normalize any backslashes so the precompiled regex matches Windows paths.
+        const normalizedPath = pathToCheck.includes('\\') ? pathToCheck.split('\\').join('/') : pathToCheck;
+
+        const matches = re => re.test(normalizedPath);
         return (
-            (!this.include || this.include.some(matches)) &&
-            (!this.exclude.some(matches) || this.excludeNegated.some(matches))
+            (!this.includeRegexps || this.includeRegexps.some(matches)) &&
+            (!this.excludeRegexps.some(matches) || this.excludeNegatedRegexps.some(matches))
         );
     }
 
