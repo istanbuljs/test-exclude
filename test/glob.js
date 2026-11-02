@@ -18,6 +18,34 @@ const cwd = path.resolve(__dirname, 'fixtures/glob');
 const extension = '.js';
 const options = { cwd, extension };
 
+t.test('glob and globSync preserve include, exclude and negated patterns', async t => {
+    const cwd = t.testdir({
+        src: {
+            'index.js': '',
+            'index.test.js': '',
+            '.hidden.ts': '',
+            ignored: { 'keep.ts': '', 'omit.js': '' }
+        },
+        other: { 'outside.js': '' }
+    });
+    const exclude = new TestExclude({
+        cwd,
+        extension: ['.js', '.ts'],
+        include: ['src/**/*.{js,ts}'],
+        exclude: ['**/*.test.js', 'src/ignored/**', '!src/ignored/keep.ts']
+    });
+    const expected = ['src/.hidden.ts', 'src/ignored/keep.ts', 'src/index.js'];
+
+    t.same(exclude.globSync().sort(), expected);
+    t.same((await exclude.glob()).sort(), expected);
+    for (const file of expected) {
+        t.equal(exclude.shouldInstrument(path.join(cwd, file)), true, file);
+    }
+    for (const file of ['src/index.test.js', 'src/ignored/omit.js', 'other/outside.js']) {
+        t.equal(exclude.shouldInstrument(path.join(cwd, file)), false, file);
+    }
+});
+
 t.test('should exclude the node_modules folder by default', async t =>
     Promise.all(
         [
